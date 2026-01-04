@@ -8,57 +8,33 @@ xf86-input-synaptics
 xorg
 intel-ucode
 amd-ucode
-
-# GNOME
 gdm
 gnome
 gnome-tweaks
-
-# GNOME Dropdown Terminal
 guake
-#nautilus-terminal
-
-# Must haves
 ffmpegthumbnailer
 fastjar
-
-# Video Player
 celluloid
-
-# Firewall
 ufw
 ufw-extras
 gufw
-
-# Codex
 gst-plugins-base
 gst-plugins-good
 gst-plugins-ugly
 gst-libav
-
-# Browser
 chromium
 firefox
-
-# File System
 dosfstools
 ntfs-3g
 gvfs
-
-# Archives
 zip
 unzip
 unrar
 p7zip
 lzop
-
-# Encryption
 veracrypt
-
 font-manager
 gparted
-
-# Misc
 vim
 reflector
 nano
@@ -75,8 +51,6 @@ os-prober
 bash-completion
 wireless_tools
 wpa_supplicant
-
-# Audio
 alsa-plugins
 alsa-utils
 pulseaudio
