@@ -30,7 +30,7 @@ while IFS= read -r pkg || [[ -n "$pkg" ]]; do
     [[ "$pkg" =~ ^# ]] && continue
 
     echo "Installing $pkg ..."
-    $SUDO_CMD pacman -S --needed --no-confirm "$pkg"
+    $SUDO_CMD pacman -S --needed --noconfirm "$pkg"
 done < "$PKG_FILE"
 
 echo "All packages processed."
