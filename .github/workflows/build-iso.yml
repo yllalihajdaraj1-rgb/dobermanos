@@ -11,15 +11,19 @@ jobs:
 
       - name: Build Doberman ISO
         run: |
-          # We use Docker because it got the furthest (Line 270!)
           sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
             pacman -Syu --noconfirm archiso
             
-            # This line is the magic. It searches for the folder with the recipe.
-            TARGET_DIR=\$(find . -name profiledef.sh -printf '%h' | head -n 1)
+            # 1. Look for the recipe folder
+            PROFILE_DIR=\$(find . -name profiledef.sh -printf '%h' | head -n 1)
             
-            echo \"Starting build in: \$TARGET_DIR\"
-            mkarchiso -v -w /tmp/archiso-workspace -o /workspace \$TARGET_DIR
+            # 2. If it's missing, try to find the folder that SHOULD have it
+            if [ -z \"\$PROFILE_DIR\" ]; then
+              PROFILE_DIR=\"./Archiv\"
+            fi
+            
+            echo \"Attempting build in: \$PROFILE_DIR\"
+            mkarchiso -v -w /tmp/archiso-workspace -o /workspace \"\$PROFILE_DIR\"
           "
 
       - name: Upload ISO
