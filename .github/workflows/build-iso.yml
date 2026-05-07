@@ -9,26 +9,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Build Doberman ISO
+      - name: Force Build Doberman
         run: |
           sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
             pacman -Syu --noconfirm archiso
             
-            # 1. Start with a perfect, official Arch template
+            # 1. Create a fresh, guaranteed-to-work profile
             cp -r /usr/share/archiso/configs/releng/ /tmp/build_profile
             
-            # 2. Add a basic package list so it doesn't crash
-            echo 'base linux linux-firmware networkmanager sudo' > /tmp/build_profile/packages.x86_64
+            # 2. Add the basic apps so it actually boots
+            echo 'base linux linux-firmware networkmanager nano' > /tmp/build_profile/packages.x86_64
             
-            # 3. Drop your Archiv files on top of the template
-            cp -rv Archiv/* /tmp/build_profile/ || true
+            # 3. If you have extra packages listed, add them to the pile
+            if [ -f \"Archiv/additional_packages_big\" ]; then
+              cat Archiv/additional_packages_big >> /tmp/build_profile/packages.x86_64
+            fi
             
-            # 4. Build it
+            # 4. Copy your custom scripts into the live system
+            mkdir -p /tmp/build_profile/airootfs/root/
+            cp -r Archiv/* /tmp/build_profile/airootfs/root/ || true
+            
+            # 5. RUN THE BUILD
             mkarchiso -v -w /tmp/archiso-workspace -o /workspace /tmp/build_profile
           "
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
-          name: DobermanOS-Arch-ISO
+          name: DobermanOS-ISO
           path: ./*.iso
