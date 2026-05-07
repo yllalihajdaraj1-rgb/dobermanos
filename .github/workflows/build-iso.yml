@@ -14,16 +14,15 @@ jobs:
           sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
             pacman -Syu --noconfirm archiso
             
-            # 1. Look for the recipe folder
-            PROFILE_DIR=\$(find . -name profiledef.sh -printf '%h' | head -n 1)
+            # 1. Grab the official 'Releng' recipe (the gold standard)
+            cp -r /usr/share/archiso/configs/releng/ /tmp/build_profile
             
-            # 2. If it's missing, try to find the folder that SHOULD have it
-            if [ -z \"\$PROFILE_DIR\" ]; then
-              PROFILE_DIR=\"./Archiv\"
-            fi
+            # 2. Merge YOUR files from 'Archiv' into the official recipe
+            # This keeps the important stuff but fixes the missing pieces
+            cp -r Archiv/* /tmp/build_profile/ || true
             
-            echo \"Attempting build in: \$PROFILE_DIR\"
-            mkarchiso -v -w /tmp/archiso-workspace -o /workspace \"\$PROFILE_DIR\"
+            # 3. Start the build
+            mkarchiso -v -w /tmp/archiso-workspace -o /workspace /tmp/build_profile
           "
 
       - name: Upload ISO
