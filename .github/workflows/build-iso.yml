@@ -11,16 +11,15 @@ jobs:
 
       - name: Build Doberman ISO
         run: |
-          sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
-            pacman -Syu --noconfirm archiso git
-            
-            # This searches for the recipe file automatically
-            PROFILE_PATH=\$(find . -name profiledef.sh -printf '%h' | head -n 1)
-            
-            echo \"Building from folder: \$PROFILE_PATH\"
-            mkarchiso -v -w /tmp/archiso-workspace -o /workspace \$PROFILE_PATH
-          "
-
+          sudo apt update
+          sudo apt install -y arch-install-scripts
+          
+          # Give the script permission to run
+          chmod +x Archiv/create-arch-iso.sh
+          
+          # Run the specific script from your project
+          sudo ./Archiv/create-arch-iso.sh
+          
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
