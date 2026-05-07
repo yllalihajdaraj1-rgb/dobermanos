@@ -9,19 +9,20 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Build Doberman ISO
+      - name: Install Tools and Build
         run: |
+          # 1. Install the tools needed to understand Arch Linux scripts
           sudo apt update
-          sudo apt install -y arch-install-scripts
-          
-          # Give the script permission to run
-          chmod +x Archiv/create-arch-iso.sh
-          
-          # Run the specific script from your project
-          sudo ./Archiv/create-arch-iso.sh
+          sudo apt install -y arch-install-scripts mkisofs squashfs-tools
+
+          # 2. Give the robot permission to read your folder
+          chmod -R 777 .
+
+          # 3. Run your specific build script
+          cd Archiv && sudo ./create-arch-iso.sh
           
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
           name: DobermanOS-Arch-ISO
-          path: ./*.iso
+          path: Archiv/*.iso
