@@ -1,0 +1,26 @@
+name: Build ISO
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
+    steps:
+      - name: Install Build Tools
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm archiso git
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      - name: Build Doberman ISO
+        run: |
+          echo "Building Doberman on Arch Linux..."
+          # The script will now run in a real Arch environment
+          mkarchiso -v -w /tmp/archiso-workspace -o ./ .
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: DobermanOS-Arch-ISO
+          path: ./*.iso
