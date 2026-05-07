@@ -9,20 +9,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Install Tools and Build
+      - name: Build in Arch Container
         run: |
-          # 1. Install the tools needed to understand Arch Linux scripts
-          sudo apt update
-          sudo apt install -y arch-install-scripts mkisofs squashfs-tools
-
-          # 2. Give the robot permission to read your folder
-          chmod -R 777 .
-
-          # 3. Run your specific build script
-          cd Archiv && sudo ./create-arch-iso.sh
+          # This creates a "mini-computer" inside GitHub that already knows Arch Linux
+          sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
+            pacman -Syu --noconfirm archiso mkinitcpio squashfs-tools libisoburn
+            
+            # Find the script and make it runnable
+            chmod +x Archiv/create-arch-iso.sh
+            
+            # Go into the folder and run it
+            cd Archiv && ./create-arch-iso.sh
+          "
           
       - name: Upload ISO
         uses: actions/upload-artifact@v4
         with:
           name: DobermanOS-Arch-ISO
-          path: Archiv/*.iso
+          path: "**/*.iso"
