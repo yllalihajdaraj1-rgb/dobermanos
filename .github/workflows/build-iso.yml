@@ -12,16 +12,20 @@ jobs:
       - name: Build Doberman ISO
         run: |
           sudo docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest /bin/bash -c "
-            pacman -Syu --noconfirm archiso
+            # 1. Install EVERYTHING needed
+            pacman -Syu --noconfirm archiso mkinitcpio squashfs-tools libisoburn dosfstools patch binutils
             
-            # 1. Grab the official 'Releng' recipe (the gold standard)
+            # 2. Setup the Official Base
             cp -r /usr/share/archiso/configs/releng/ /tmp/build_profile
             
-            # 2. Merge YOUR files from 'Archiv' into the official recipe
-            # This keeps the important stuff but fixes the missing pieces
-            cp -r Archiv/* /tmp/build_profile/ || true
+            # 3. Force your Archiv files into the profile
+            # This makes sure the robot sees YOUR work
+            cp -rv Archiv/* /tmp/build_profile/ || true
             
-            # 3. Start the build
+            # 4. Final Permission Sweep
+            chmod +x /tmp/build_profile/profiledef.sh || true
+            
+            # 5. BUILD
             mkarchiso -v -w /tmp/archiso-workspace -o /workspace /tmp/build_profile
           "
 
